@@ -6,6 +6,7 @@ body {
 
 input {
   max-width: 500px;
+  outline: none;
 }
 
 .gray {
@@ -56,7 +57,7 @@ input {
   margin: 0.25em 0 0.5em 0;
   padding: 0;
   color: red;
-  font-style: bold;
+  font-weight: bold;
 }
 
 .header {
