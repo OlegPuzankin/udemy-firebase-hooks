@@ -32,6 +32,7 @@ function LinkItem({link, index, showCount, history}) {
                         const vote = {votedBy: {id: user.uid, name: user.displayName}};
                         const updatedVotes = [...previousVotes, vote];
                         linkRef.update({votes: updatedVotes});
+
                     }
                 }
             })
@@ -42,9 +43,9 @@ function LinkItem({link, index, showCount, history}) {
 
     function handleDeleteLink() {
         const linkRef = fb.db.collection('links').doc(link.id);
-        linkRef.delete().then(()=>{
+        linkRef.delete().then(() => {
             console.log('Link deleted')
-        }).catch(err=>{
+        }).catch(err => {
             console.error("Error deleting link", err)
         })
 
@@ -75,7 +76,7 @@ function LinkItem({link, index, showCount, history}) {
                             : 'discuss'
                         }
                     </Link>
-                    {postedByAuthUser &&(
+                    {postedByAuthUser && (
                         <>
                             {'|'}
                             <span className='delete-button' onClick={handleDeleteLink}>delete</span>

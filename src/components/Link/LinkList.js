@@ -6,31 +6,43 @@ function LinkList(props) {
 
     const {fb} = React.useContext(FirebaseContext);
     const [links, setLinks] = React.useState([]);
+    const isNewPage = props.location.pathname.includes('new');
 
     React.useEffect(() => {
         console.log('useEffect linkslist');
-        const unmount = getLinks();
-        console.log('unmount', unmount);
+        let  unmount = getLinks();
+        console.log('unmount-', unmount);
 
-        //return unmount;
-        //debugger
+        return unmount
+
     }, []);
 
     function getLinks() {
-        fb.db.collection('links').onSnapshot(snapshot => {
-            const links = snapshot.docs.map(doc => {
-                return {id: doc.id, ...doc.data()}
-            });
-            //console.log(links);
-            setLinks(links);
-        })
+        return fb.db.collection('links').
+        orderBy('created', 'desc').
+        onSnapshot(handleSnapshot)
+
+    }
+
+    function handleSnapshot(snapshot){
+        const links = snapshot.docs.map(doc => {
+            return {id: doc.id, ...doc.data()}
+        });
+        //console.log(links);
+        setLinks(links);
+    }
+    function renderLinks (){
+        if(isNewPage)
+            return links;
+        else
+            return links.slice().sort((l1, l2)=>l2.votes.length-l1.votes.length)
     }
 
     console.log('render linkslist');
 
     return (
         <div>
-            {links.map((link, index) => {
+            {renderLinks().map((link, index) => {
                 return <LinkItem key={link.id} showCount={true} link={link} index={index + 1}/>
             })}
         </div>
