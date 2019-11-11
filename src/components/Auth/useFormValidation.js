@@ -8,7 +8,7 @@ function useFormValidation(initialState, validate, authenticate) {
 
 
     React.useEffect(() => {
-        console.log('use effect')
+        //console.log('use effect')
         if (isSubmitting) {
             const noErrors = (Object.keys(errors).length === 0);
             if (noErrors) {

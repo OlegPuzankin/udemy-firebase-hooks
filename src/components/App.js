@@ -12,7 +12,8 @@ import fb, {FirebaseContext} from '../firebase'
 
 function App() {
 
-    const user = useAuth();
+   const user = useAuth();
+    //const user = {};
 
     return (
 

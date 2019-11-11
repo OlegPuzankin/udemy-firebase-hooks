@@ -7,6 +7,7 @@ function useAuth() {
 
 
     React.useEffect(()=>{
+        //console.log('use effect auth')
         const unsubscribe =fb.auth.onAuthStateChanged(user=>{
             //console.log(fb.auth)
             //debugger
@@ -17,10 +18,14 @@ function useAuth() {
                 //console.log('no user')
             }
         });
+        //console.log(unsubscribe);
 
-        return ()=>unsubscribe();
+        return ()=>{
+            console.log('use effect auth return')
+            unsubscribe();
+        }
 
-    }, [])
+    }, []);
 
     return authUser
 }
