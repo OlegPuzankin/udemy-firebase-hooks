@@ -1,13 +1,19 @@
 import React from "react";
 import {FirebaseContext} from "../../firebase";
 import LinkItem from "./LinkItem";
+import {useSelector, useDispatch } from "react-redux";
+import {setLinksToStore} from "../../redux/actions";
 
-function SearchLinks() {
+function SearchLinks(props) {
 
     const [queryString, setQueryString] = React.useState('');
-    const [links, setLinks] = React.useState([]);
+    //const [links, setLinks] = React.useState([]);
     const [filteredLinks, setFilteredLinks] = React.useState([]);
     const {fb} = React.useContext(FirebaseContext);
+
+    const linksFromStore = useSelector(state => state.links.linkList);
+    const dispatch = useDispatch();
+
 
     React.useEffect(() => {
             getInitialLinks()
@@ -19,27 +25,29 @@ function SearchLinks() {
             const links = snapshot.docs.map(doc => {
                 return {id: doc.id, ...doc.data()}
             });
-            setLinks(links)
+            //setLinks(links);
+            dispatch(setLinksToStore(links));
         })
     }
 
     function handleSearch(event) {
-        debugger
+        //debugger
         event.preventDefault();
-        console.log(links);
         const query = queryString.toLowerCase();
-        const matchedLinks = links.filter(link => {
-          debugger
+        const matchedLinks = linksFromStore.filter(link => {
+          //debugger
             return (
                 link.description.toLowerCase().includes(query)
                 || link.url.toLowerCase().includes(query)
                 || link.postedBy.name.toLowerCase().includes(query)
             )
-        })
+        });
         setFilteredLinks(matchedLinks);
 
 
     }
+
+    //console.log('linksRdx', linksFromStore);
 
 
     return (

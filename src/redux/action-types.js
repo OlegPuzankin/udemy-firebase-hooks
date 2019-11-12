@@ -1,0 +1,1 @@
+export const SET_LINKS_LIST='SET_LINKS_LIST';
