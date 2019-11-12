@@ -1,34 +1,16 @@
 import React from "react";
 import {FirebaseContext} from "../../firebase";
 import LinkItem from "./LinkItem";
-import {useSelector, useDispatch } from "react-redux";
-import {setLinksToStore} from "../../redux/actions";
+import {useSelector } from "react-redux";
 
-function SearchLinks(props) {
+function SearchLinks() {
 
     const [queryString, setQueryString] = React.useState('');
     //const [links, setLinks] = React.useState([]);
     const [filteredLinks, setFilteredLinks] = React.useState([]);
-    const {fb} = React.useContext(FirebaseContext);
+    //const {fb} = React.useContext(FirebaseContext);
 
     const linksFromStore = useSelector(state => state.links.linkList);
-    const dispatch = useDispatch();
-
-
-    React.useEffect(() => {
-            getInitialLinks()
-        },
-        []);
-
-    function getInitialLinks() {
-        fb.db.collection('links').get().then(snapshot => {
-            const links = snapshot.docs.map(doc => {
-                return {id: doc.id, ...doc.data()}
-            });
-            //setLinks(links);
-            dispatch(setLinksToStore(links));
-        })
-    }
 
     function handleSearch(event) {
         //debugger

@@ -9,11 +9,31 @@ import LinkDetail from "./Link/LinkDetail";
 import Header from "./Header";
 import useAuth from "./Auth/useAuth";
 import fb, {FirebaseContext} from '../firebase'
+import {useDispatch, useSelector} from "react-redux";
+import {setLinksToStore} from "../redux/actions";
 
 function App() {
 
-   const user = useAuth();
-    //const user = {};
+    const [initialLinks, setInitialLinks] = React.useState(null)
+    const user = useAuth();
+    const dispatch = useDispatch();
+
+    React.useEffect(() => {
+            getInitialLinks()
+        },
+        [initialLinks]);
+
+    function getInitialLinks() {
+        fb.db.collection('links').onSnapshot(snapshot => {
+            const links = snapshot.docs.map(doc => {
+                return {id: doc.id, ...doc.data()}
+            });
+            //setLinks(links);
+            dispatch(setLinksToStore(links));
+            setInitialLinks(links)
+        })
+    }
+
 
     return (
 
