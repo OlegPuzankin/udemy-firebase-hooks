@@ -1,23 +1,38 @@
 import React from "react";
 import {FirebaseContext} from "../../firebase";
 import LinkItem from "./LinkItem";
-import {useSelector } from "react-redux";
 
 function SearchLinks() {
 
     const [queryString, setQueryString] = React.useState('');
-    //const [links, setLinks] = React.useState([]);
+    const [links, setLinks] = React.useState([]);
     const [filteredLinks, setFilteredLinks] = React.useState([]);
-    //const {fb} = React.useContext(FirebaseContext);
+    const {fb} = React.useContext(FirebaseContext);
 
-    const linksFromStore = useSelector(state => state.links.linkList);
+    React.useEffect(() => {
+        const unsubscribe=getLinks();
+        return ()=>unsubscribe()
+    }, []);
+
+
+    function getLinks() {
+       return fb.db.collection('links')
+            .get()
+            .then(snapshot => {
+                const links = snapshot.docs.map(doc => {
+                    return {id: doc.id, ...doc.data()}
+                });
+
+                setLinks(links)
+            })
+    }
 
     function handleSearch(event) {
         //debugger
         event.preventDefault();
         const query = queryString.toLowerCase();
-        const matchedLinks = linksFromStore.filter(link => {
-          //debugger
+        const matchedLinks = links.filter(link => {
+            //debugger
             return (
                 link.description.toLowerCase().includes(query)
                 || link.url.toLowerCase().includes(query)

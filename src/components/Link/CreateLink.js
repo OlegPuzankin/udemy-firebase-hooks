@@ -24,6 +24,7 @@ function CreateLink(props) {
       const newLink={
         description,
         url,
+        votesCount: 0,
         postedBy:{
           id: user.uid,
           name: user.displayName

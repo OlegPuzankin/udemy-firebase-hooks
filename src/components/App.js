@@ -14,25 +14,9 @@ import {setLinksToStore} from "../redux/actions";
 
 function App() {
 
-    const [initialLinks, setInitialLinks] = React.useState(null)
+
     const user = useAuth();
-    const dispatch = useDispatch();
 
-    React.useEffect(() => {
-            getInitialLinks()
-        },
-        [initialLinks]);
-
-    function getInitialLinks() {
-        fb.db.collection('links').onSnapshot(snapshot => {
-            const links = snapshot.docs.map(doc => {
-                return {id: doc.id, ...doc.data()}
-            });
-            //setLinks(links);
-            dispatch(setLinksToStore(links));
-            setInitialLinks(links)
-        })
-    }
 
 
     return (
@@ -48,6 +32,7 @@ function App() {
                             <Route path="/login" component={Login}/>
                             <Route path="/forgot" component={ForgotPassword}/>
                             <Route path="/search" component={SearchLinks}/>
+                            <Route path="/old" component={LinkList}/>
                             <Route path="/top" component={LinkList}/>
                             <Route path="/new/:page" component={LinkList}/>
                             <Route path="/link/:linkId" component={LinkDetail}/>

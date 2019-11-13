@@ -12,28 +12,29 @@ function LinkItem({link, index, showCount, history}) {
         if (!user)
             history.push('/login');
         else {
-            let isVoted = false;
+            //let isVoted = false;
             const linkRef = fb.db.collection('links').doc(link.id);
             //console.log(linkRef);
             //console.log('user', user);
             linkRef.get().then(doc => {
                 if (doc.exists) {
                     const previousVotes = doc.data().votes;
-                    previousVotes.forEach(vote => {
-                        //debugger
-                        if (vote.votedBy.id === user.uid) {
-                            isVoted = true;
-                        }
-                    });
+                    // previousVotes.forEach(vote => {
+                    //     //debugger
+                    //     if (vote.votedBy.id === user.uid) {
+                    //         isVoted = true;
+                    //     }
+                    // });
 
-                    if (isVoted) {
-                        console.log(`${user.displayName} is already voted`);
-                    } else {
-                        const vote = {votedBy: {id: user.uid, name: user.displayName}};
-                        const updatedVotes = [...previousVotes, vote];
-                        linkRef.update({votes: updatedVotes});
+                    // if (isVoted) {
+                    //     console.log(`${user.displayName} is already voted`);
+                    // } else {
+                    const vote = {votedBy: {id: user.uid, name: user.displayName}};
+                    const updatedVotes = [...previousVotes, vote];
+                    const votesCount = updatedVotes.length;
+                    linkRef.update({votes: updatedVotes, votesCount});
 
-                    }
+
                 }
             })
         }
@@ -70,7 +71,7 @@ function LinkItem({link, index, showCount, history}) {
                     <span className='link'> ({getDomain(link.url)})</span>
                 </div>
                 <div className='f6 lh-copy gray'>
-                    {link.votes.length} votes by {link.postedBy.name} {dateFns(link.created)}
+                    {link.votesCount} votes | posted by {link.postedBy.name} {dateFns(link.created)}
                     {'|'}
                     <Link to={`/link/${link.id}`}>
                         {link.comments.length > 0
