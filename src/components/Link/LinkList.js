@@ -1,8 +1,10 @@
 import React from "react";
 import {FirebaseContext} from "../../firebase";
 import LinkItem from "./LinkItem";
-import {LINKS_PER_PAGE} from "../../utils";
 
+import axios from 'axios'
+
+const LINKS_PER_PAGE =3;
 
 function LinkList(props) {
     const {fb} = React.useContext(FirebaseContext);
@@ -12,12 +14,13 @@ function LinkList(props) {
     const isTopPage = props.location.pathname.includes('top');
     const isOldPage = props.location.pathname.includes('old');
     const page=Number(props.match.params.page);
+    let isLastPage=false;
 
 
     React.useEffect(() => {
         const unsubscribe = getLinks();
         return () => unsubscribe();
-    }, [isTopPage, isOldPage, isNewPage, page]);
+    }, [isTopPage, isOldPage, isNewPage, page, isLastPage]);
 
 
     function getLinks() {
@@ -37,20 +40,34 @@ function LinkList(props) {
                 .onSnapshot(handleSnapshot)
         }
 
-        else if(page===1){
-            debugger
-            return fb.db.collection('links')
-                .orderBy('created', 'desc')
-                .limit(LINKS_PER_PAGE)
-                .onSnapshot(handleSnapshot)
-        }
-        else if(hasCursor){
-            debugger
-            return fb.db.collection('links')
-                .orderBy('created', 'desc')
-                .startAfter(cursor.created)
-                .limit(LINKS_PER_PAGE)
-                .onSnapshot(handleSnapshot)
+        // else if(page===1){
+        //     debugger
+        //     return fb.db.collection('links')
+        //         .orderBy('created', 'desc')
+        //         .limit(LINKS_PER_PAGE)
+        //         .onSnapshot(handleSnapshot)
+        // }
+        // else if(hasCursor){
+        //     debugger
+        //     return fb.db.collection('links')
+        //         .orderBy('created', 'desc')
+        //         .startAfter(cursor.created)
+        //         .limit(LINKS_PER_PAGE)
+        //         .onSnapshot(handleSnapshot)
+
+        //}
+        else {
+            const offset = page*LINKS_PER_PAGE - LINKS_PER_PAGE;
+            axios
+                .get(`https://us-central1-udemy-hooks-firebase.cloudfunctions.net/linksPagination?offset=${offset}`)
+                .then(response=>{
+                    const links =response.data;
+                    const lastLink=links[links.length-1];
+                    setLinks(links);
+                    setCursor(lastLink);
+
+                });
+            return ()=>{};
 
         }
 
@@ -67,36 +84,34 @@ function LinkList(props) {
         setCursor(lastLink);
     }
 
-    const pageIndex =  page ? (page -1) *LINKS_PER_PAGE+1:0;
+    const pageIndex =  page
+        ? (page -1)*LINKS_PER_PAGE+1
+        : 0;
 
     function handlePrevPage(){
         if(page>1){
             props.history.push(`/new/${page -1}`)
+
         }
 
     }
 
     function handleNextPage(){
-        debugger
-        if(page<=(links.length+pageIndex -1)/LINKS_PER_PAGE){
+
+        if(page<=(links.length+pageIndex-1) / LINKS_PER_PAGE){
+            debugger
             props.history.push(`/new/${page +1}`)
+            isLastPage=false;
         }
+        else{
+            debugger
+            isLastPage=true;
+        }
+
 
     }
 
-
-    // function renderLinks() {
-    //     if (isNewPage)
-    //         return links;
-    //     else
-    //         return links.slice().sort((l1, l2) => l2.votes.length - l1.votes.length)
-    // }
-
-
     console.log('handle next page', (page<=links.length/LINKS_PER_PAGE));
-    //console.log(' links per page', LINKS_PER_PAGE)
-
-
 
     return (
         <div>
@@ -108,8 +123,9 @@ function LinkList(props) {
             : <div>loading...</div>}
             {isNewPage &&(
             <div className='pagination'>
-                <div className='pointer mr2' onClick={handlePrevPage}>Previous</div>
-                <div className='pointer mr2' onClick={handleNextPage}>Next</div>
+
+                {page>1 && <div className='pointer mr2' onClick={handlePrevPage}>Previous</div>}
+                {!isLastPage && (<div className='pointer mr2' onClick={handleNextPage}>Next</div>)}
             </div>
             )}
         </div>
