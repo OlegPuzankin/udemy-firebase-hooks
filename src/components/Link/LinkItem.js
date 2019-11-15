@@ -4,21 +4,24 @@ import {getDomain} from "../../utils";
 import dateFns from 'date-fns/distance_in_words_to_now'
 import {FirebaseContext} from "../../firebase";
 
-function LinkItem({link, index, showCount, history}) {
+function LinkItem({link, index, showCount, history, forceUpdate}) {
 
     const {fb, user} = React.useContext(FirebaseContext);
+
+
+
 
     function handleVote() {
         if (!user)
             history.push('/login');
         else {
-            //let isVoted = false;
+
             const linkRef = fb.db.collection('links').doc(link.id);
-            //console.log(linkRef);
-            //console.log('user', user);
+
             linkRef.get().then(doc => {
                 if (doc.exists) {
                     const previousVotes = doc.data().votes;
+                    //debugger
                     // previousVotes.forEach(vote => {
                     //     //debugger
                     //     if (vote.votedBy.id === user.uid) {
@@ -33,13 +36,11 @@ function LinkItem({link, index, showCount, history}) {
                     const updatedVotes = [...previousVotes, vote];
                     const votesCount = updatedVotes.length;
                     linkRef.update({votes: updatedVotes, votesCount});
-
+                    forceUpdate()
 
                 }
             })
         }
-
-
     }
 
     function handleDeleteLink() {
@@ -56,7 +57,7 @@ function LinkItem({link, index, showCount, history}) {
     const postedByAuthUser = user && user.uid === link.postedBy.id;
 
 
-    //console.log('linkCreateByAuthUser', postedByAuthUser);
+    console.log('linkItem render');
 
     return (
         <div className='flex items-start mt2'>

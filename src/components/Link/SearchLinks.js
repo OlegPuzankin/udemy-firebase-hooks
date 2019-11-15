@@ -22,17 +22,14 @@ function SearchLinks() {
                 const links = snapshot.docs.map(doc => {
                     return {id: doc.id, ...doc.data()}
                 });
-
                 setLinks(links)
             })
     }
 
     function handleSearch(event) {
-        //debugger
         event.preventDefault();
         const query = queryString.toLowerCase();
         const matchedLinks = links.filter(link => {
-            //debugger
             return (
                 link.description.toLowerCase().includes(query)
                 || link.url.toLowerCase().includes(query)
@@ -40,12 +37,7 @@ function SearchLinks() {
             )
         });
         setFilteredLinks(matchedLinks);
-
-
     }
-
-    //console.log('linksRdx', linksFromStore);
-
 
     return (
         <div>
