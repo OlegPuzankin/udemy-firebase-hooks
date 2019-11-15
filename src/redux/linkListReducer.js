@@ -1,8 +1,9 @@
-import {SET_LINKS_LIST} from "./action-types";
+import {SET_COUNT_PAGES, SET_LINKS_LIST} from "./action-types";
 
 
 const initialState = {
-    linkList: []
+    linkList: [],
+    countPages: 0
 };
 
 export const linksListReducer=(state=initialState, action)=>{
@@ -13,6 +14,11 @@ export const linksListReducer=(state=initialState, action)=>{
             return {
                 ...state,
                 linkList: action.linkList
+            };
+        case SET_COUNT_PAGES:
+            return  {
+                ...state,
+                countPages: action.countPages
             };
 
         default:

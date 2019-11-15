@@ -11,11 +11,24 @@ import useAuth from "./Auth/useAuth";
 import fb, {FirebaseContext} from '../firebase'
 import {useDispatch, useSelector} from "react-redux";
 import {setLinksToStore} from "../redux/actions";
+import {LINKS_PER_PAGE} from "../utils";
 
-function App() {
 
+// function getCountPages() {
+//     let pagesCount=3;
+//     fb.db.collection('links').get().then(snapshot=>{
+//         //debugger
+//         const linksCount=snapshot.docs.length;
+//         pagesCount=Math.ceil(linksCount/LINKS_PER_PAGE);
+//         //debugger
+//     });
+//     return pagesCount;
+//
+// }
+ function App() {
 
     const user = useAuth();
+    //const pagesCount= getCountPages();
 
 
 

@@ -1,1 +1,2 @@
 export const SET_LINKS_LIST='SET_LINKS_LIST';
+export const SET_COUNT_PAGES='SET_COUNT_PAGES';
